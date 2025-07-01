@@ -1,14 +1,12 @@
 import streamlit as st
-import os
-from dotenv import load_dotenv
 import pycountry
 from langchain_nvidia_ai_endpoints import ChatNVIDIA
 
 # ─── ENVIRONMENT & LLM CONFIG ───────────────────────────────
-load_dotenv()
-API_KEY = os.getenv("NVIDIA_API_KEY", "")
-if not API_KEY.startswith("nvapi-"):
-    raise RuntimeError("Invalid or missing NVIDIA_API_KEY")
+API_KEY = st.secrets.get("NVIDIA_API_KEY", "")
+if not API_KEY or not API_KEY.startswith("nvapi-"):
+    st.stop()  # Stop app with no error trace
+    raise RuntimeError("Invalid or missing NVIDIA_API_KEY in Streamlit Secrets")
 
 llm = ChatNVIDIA(
     model="meta/llama-3.2-3b-instruct",
@@ -84,12 +82,11 @@ def main():
     st.title("🧠 Job Description Generator (NVIDIA LLM)")
     st.markdown("Fill in the details below to generate a professional job description.")
 
-    # Basic Job Inputs
     st.subheader("🛠️ Basic Job Details")
     job_title = st.text_input("Job Title", placeholder="e.g., Data Scientist")
 
     department = st.selectbox("Department (Optional)", [""] + [
-        "IT", "Marketing", "Finance", "HR", "Sales", "Engineering", "Operations", 
+        "IT", "Marketing", "Finance", "HR", "Sales", "Engineering", "Operations",
         "Legal", "Product Management", "Customer Support", "Design", "R&D"
     ])
     department = None if department == "" else department
@@ -114,7 +111,6 @@ def main():
     with col4:
         max_salary = st.number_input("Max Salary", min_value=min_salary, step=1000)
 
-    # Skills Section
     st.subheader("🧩 Skills Section")
     if not job_title:
         st.info("Please enter a job title to generate skills.")
@@ -153,7 +149,6 @@ def main():
         st.error("Select at least one mandatory skill.")
         return
 
-    # Optional Section
     st.subheader("📘 Optional Details")
     education = st.selectbox("Education (Optional)", [""] + [
         "High School Diploma", "Associate's Degree", "Bachelor's Degree",
@@ -163,7 +158,6 @@ def main():
 
     number_of_openings = st.number_input("Number of Openings (Optional)", min_value=1, step=1, value=1) if st.checkbox("Specify Openings") else None
 
-    # Generate Job Description
     if st.button("🚀 Generate Job Description"):
         if location == "Select Location" or experience_level == "Select" or employment_type == "Select" or salary_basis == "Select":
             st.error("Please complete all required fields.")
