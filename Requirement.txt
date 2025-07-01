@@ -1,4 +1,0 @@
-# Force rebuild
-streamlit
-pycountry
-langchain-nvidia-ai-endpoints
