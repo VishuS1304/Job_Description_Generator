@@ -1,7 +1,7 @@
 streamlit
-google-generativeai
 python-dotenv
 pycountry
 Pillow
 plotly
 pandas
+langchain_nvidia_ai_endpoints
