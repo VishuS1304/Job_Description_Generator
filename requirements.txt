@@ -1,0 +1,5 @@
+# requirements.txt
+streamlit
+pycountry
+langchain-nvidia-ai-endpoints
+python-dotenv
